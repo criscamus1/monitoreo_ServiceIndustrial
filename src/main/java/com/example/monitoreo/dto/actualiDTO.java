@@ -14,5 +14,7 @@ Integer jaulaId;
 double temperatura;
 double oxigeno;
 double ph;
+double salinidad;
 String fechaRegistro;
+
 }

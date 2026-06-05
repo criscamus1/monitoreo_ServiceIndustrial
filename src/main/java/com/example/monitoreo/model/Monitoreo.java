@@ -26,6 +26,8 @@ public class Monitoreo {
  private Double oxigeno;
 @Column(name = "ph", nullable = false)
  private Double ph;
+ @Column(name = "salinidad", nullable = false)
+ private Double salinidad;
 
 @Column(name = "fecha_registro", nullable = false, length = 20)
  private String fechaRegistro;

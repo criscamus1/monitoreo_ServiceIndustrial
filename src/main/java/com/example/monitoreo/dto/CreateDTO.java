@@ -20,6 +20,10 @@ public record CreateDTO (
     @DecimalMin(value = "0.0", message = "El ph no puede ser negativo")
     @DecimalMax(value = "10.0", message = "EL ph esta mas alto de lo establecido")
     Double ph,
+    @NotNull(message = "La medicion de la sal  es obligatoria")
+    @DecimalMin(value = "0.0", message = "El ph no puede ser negativo")
+    @DecimalMax(value = "15.0", message = "EL ph esta mas alto de lo establecido")
+    Double salinidad,
 
     @NotNull(message = "Debe registrar la fecha de la medición")
     String fechaRegistro

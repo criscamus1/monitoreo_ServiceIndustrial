@@ -28,6 +28,7 @@ public Monitoreo registrarMedicion(CreateDTO dto) {
         mon.setTemperatura(dto.temperatura());
         mon.setOxigeno(dto.oxigenoDisuelto()); 
         mon.setPh(dto.ph());
+        mon.setSalinidad(dto.salinidad());
         mon.setFechaRegistro(dto.fechaRegistro());
           if (dto.temperatura() > 15.0 && dto.oxigenoDisuelto() < 5.0) {
             System.out.println("[ALERTA]: Se ha detectado un crecimiento explosivo de algas.");
@@ -41,8 +42,9 @@ public Monitoreo actualizarMonitoreo(int id, actualiDTO dto){
    mon.setTemperatura(dto.getTemperatura());
    mon.setOxigeno(dto.getOxigeno());
    mon.setPh(dto.getPh());
+   mon.setSalinidad(dto.getSalinidad());
    mon.setFechaRegistro(dto.getFechaRegistro());
    return repository.save(mon);
 
-
+}
 }
