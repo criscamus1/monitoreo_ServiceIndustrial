@@ -1,44 +1,47 @@
 package com.example.monitoreo.controller;
 
+import com.example.monitoreo.dto.CreateDTO;
+import com.example.monitoreo.dto.actualiDTO;
 import com.example.monitoreo.model.Monitoreo;
 import com.example.monitoreo.service.MonitoreoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import  org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
+
+import  org.springframework.web.bind.annotation.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-
 
 
 
 
 
 @RestController
-@RequestMapping("/Monitoreo")
+@RequestMapping("/api/v1/monitoreo")
 public class MonitoreoController {
 @Autowired
-private MonitoreoService service;
+ private  MonitoreoService service;
 
-@GetMapping
-public List<Monitoreo>listaMonitoreos(){
-    return service.obtenerMonitoreos();
-}
-@GetMapping("/{id}")
-public Monitoreo buscaMonitoreos(@PathVariable int id){
-return service.buscarId(id);
-}
-@PostMapping
-public Monitoreo guardar(@RequestBody Monitoreo mon){
-    return service.guardarMonitoreo(mon);
-}
+  @GetMapping 
+    public List<Monitoreo> listarTodo() {
+      return service.obtenerMonitoreo();
+    }
+  @GetMapping("/{id}") 
+    public Monitoreo buscarPorId(@PathVariable int id) {
+      return service.buscarLecturaPorId(id);
+    }
+    
+@PostMapping 
+    public Monitoreo crear(@Valid @RequestBody CreateDTO dto) {
+        return service.registrarMedicion(dto);
+    }
 @PutMapping
-public Monitoreo actualizar (@RequestBody Monitoreo mon){
-    return service.actualizarMonitoreo(mon);
+public Monitoreo actualizarMonitoreo(@PathVariable int id, @Valid @RequestBody actualiDTO dto){
+  return service.actualizarMonitoreo(id, dto);
 }
 }
 
