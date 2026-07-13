@@ -1,6 +1,7 @@
 package com.example.monitoreo.service;
 
 import com.example.monitoreo.dto.CreateDTO;
+import com.example.monitoreo.dto.actuDTO;
 import com.example.monitoreo.dto.actualiDTO;
 import com.example.monitoreo.extencion.extencion;
 import com.example.monitoreo.model.Monitoreo;
@@ -13,38 +14,65 @@ import java.util.List;
 
 @Service
 public class MonitoreoService {
- @Autowired
-    private MonitoreoRepository repository;
+    private final MonitoreoRepository repository;
 
-   public List<Monitoreo> obtenerMonitoreo() {
+    public MonitoreoService(MonitoreoRepository repository) {
+        this.repository = repository;
+    }
+    public List<Monitoreo> getMonitoreos() {
         return repository.findAll();
     }
- public Monitoreo buscarLecturaPorId(int id) {
-        return repository.findById(id).orElseThrow(() -> new extencion("El id no fue encontrado"));
-    }  
-public Monitoreo registrarMedicion(CreateDTO dto) {
-        Monitoreo mon = new Monitoreo();
-        mon.setJaulaId(dto.jaulaId());
-        mon.setTemperatura(dto.temperatura());
-        mon.setOxigeno(dto.oxigenoDisuelto()); 
-        mon.setPh(dto.ph());
-        mon.setSalinidad(dto.salinidad());
-        mon.setFechaRegistro(dto.fechaRegistro());
-          if (dto.temperatura() > 15.0 && dto.oxigenoDisuelto() < 5.0) {
-            System.out.println("[ALERTA]: Se ha detectado un crecimiento explosivo de algas.");
-        }
-        return repository.save(mon);
+    public Monitoreo buscarMonitoreo(Integer id) {
+        return repository.findById(id).orElseThrow(() ->new RuntimeException("La medición no existe."));
+    }
+public String guardarMonitoreo(CreateDTO dto) {
 
-}
-public Monitoreo actualizarMonitoreo(int id, actualiDTO dto){
-   Monitoreo mon=buscarLecturaPorId(id);
-   mon.setJaulaId(dto.getJaulaId());
-   mon.setTemperatura(dto.getTemperatura());
-   mon.setOxigeno(dto.getOxigeno());
-   mon.setPh(dto.getPh());
-   mon.setSalinidad(dto.getSalinidad());
-   mon.setFechaRegistro(dto.getFechaRegistro());
-   return repository.save(mon);
+    Monitoreo monitoreo = new Monitoreo();
+    monitoreo.setJaulaId(dto.jaulaId());
+    monitoreo.setTemperatura(dto.temperatura());
+    monitoreo.setOxigeno(dto.oxigenoDisuelto());
+    monitoreo.setPh(dto.ph());
+    monitoreo.setSalinidad(dto.salinidad());
+    monitoreo.setFechaRegistro(dto.fechaRegistro());
 
-}
+    repository.save(monitoreo);
+
+    String alerta = "";
+    if(dto.temperatura() > 18){
+        alerta += "Temperatura sobre el límite permitido.\n";
+    }
+    if(dto.oxigenoDisuelto() < 5){
+        alerta += "Oxígeno por debajo del nivel recomendado.\n";
+    }
+    if(dto.ph() < 6.5 || dto.ph() > 8.5){
+        alerta += "pH fuera del rango permitido.\n";
+    }
+    if(dto.salinidad() < 28 || dto.salinidad() > 35){
+        alerta += "Salinidad fuera del rango permitido.\n";
+    }
+    if(alerta.isBlank()){
+        return "Medición registrada correctamente.";
+    }
+    return "Medición registrada.\n\nALERTA:\n" + alerta;
+    }
+    
+    public Monitoreo actualizar(Integer id, actuDTO dto) {
+
+        Monitoreo monitoreo = buscarMonitoreo(id);
+
+        monitoreo.setTemperatura(dto.temperatura());
+        monitoreo.setOxigeno(dto.oxigeno());
+        monitoreo.setPh(dto.ph());
+        monitoreo.setSalinidad(dto.salinidad());
+        monitoreo.setFechaRegistro(dto.fechaRegistro());
+
+        return repository.save(monitoreo);
+    }
+
+    public List<Monitoreo> buscarPorJaula(Integer jaulaId) {
+        List<Monitoreo> lista = repository.findByJaulaId(jaulaId);
+          if (lista.isEmpty()) {throw new RuntimeException("No existen mediciones para esta jaula."); }
+            return lista;
+    }
+
 }
